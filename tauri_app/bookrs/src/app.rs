@@ -55,7 +55,14 @@ pub fn App() -> impl IntoView {
 
             <p>
                 "Recommended IDE setup: "
-                <a href="https://code.visualstudio.com/" target="_blank">"VS Code"</a>
+                // <a href="https://code.visualstudio.com/" target="_blank">"VS Code"</a>
+                <a on:click=move |ev| {
+                    spawn_local(async move {
+                        invoke("open_browser", JsValue::NULL).await;
+                    });
+                }>
+                    <del>"VS Code"</del>
+                </a>
                 " + "
                 <a href="https://github.com/tauri-apps/tauri-vscode" target="_blank">"Tauri"</a>
                 " + "
@@ -70,6 +77,16 @@ pub fn App() -> impl IntoView {
                 />
                 <button type="submit">"Greet"</button>
             </form>
+
+            // button to call `uname`
+            <button on:click=move |ev| {
+                spawn_local(async move {
+                    let uname = invoke("uname", JsValue::NULL).await.as_string().unwrap();
+                    set_greet_msg.set(uname);
+                });
+            }>
+                "uname"
+            </button>
 
             <p><b>{ move || greet_msg.get() }</b></p>
         </main>
